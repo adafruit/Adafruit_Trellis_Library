@@ -2,7 +2,7 @@ This is a library for the Adafruit Trellis PCB
 
 Designed specifically to work with the Adafruit Trellis!
   ----> https://www.adafruit.com/products/1611
-  ----> https://www.adafruit.com/products/1612
+  ----> https://www.adafruit.com/products/1616
 
 These tiles use I2C to communicate, 2 pins are required to interface
 
