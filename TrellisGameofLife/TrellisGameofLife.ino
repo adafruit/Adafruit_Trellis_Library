@@ -29,13 +29,25 @@ Adafruit_TrellisSet trellis =  Adafruit_TrellisSet(&matrix0, &matrix1, &matrix2,
 
 #define numKeys (NUMTRELLIS * 16)
 
+/*
+  In order for this layout to work, you will have to have soldered your 4 boards
+  together in the same order that I did.  Below is the top view of the circuit, with
+  each board's address, and lines indicating which boards are connected to each other.
+  If you soldered your boards together differently, you will need to edit the chessboard
+  array below until the LED wipe when you start up your sketch turns on all of the LEDs
+  in order.
+
+             [0x73]--[0x72]
+                       |
+  [ARDUINO]--[0x70]--[0x71]
+ 
+*/
 
 int chessboard[8][8] = {
   {60, 56, 52, 48, 44, 40, 36, 32}, 
   {61, 57, 53, 49, 45, 41, 37, 33},
   {62, 58, 54, 50, 46, 42, 38, 34},
   {63, 59, 55, 51, 47, 43, 39, 35},
-
   {12, 8, 4, 0, 28, 24, 20, 16},
   {13, 9, 5, 1, 29, 25, 21, 17},
   {14, 10, 6, 2, 30, 26, 22, 18},
