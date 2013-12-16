@@ -53,8 +53,8 @@ Adafruit_TrellisSet trellis =  Adafruit_TrellisSet(&matrix0);
 #define numKeys (NUMTRELLIS * 16)
 
 // Connect Trellis Vin to 5V and Ground to ground.
-// Connect the INT wire to pin #5 (can change later
-#define INTPIN 5
+// Connect the INT wire to pin #A2 (can change later!)
+#define INTPIN A2
 // Connect I2C SDA pin to your Arduino SDA line
 // Connect I2C SCL pin to your Arduino SCL line
 // All Trellises share the SDA, SCL and INT pin! 
@@ -73,6 +73,19 @@ void setup() {
   // I find it easiest if the addresses are in order
   trellis.begin(0x70);  // only one
   // trellis.begin(0x70, 0x71, 0x72, 0x73);  // or four!
+
+  // light up all the LEDs in order
+  for (uint8_t i=0; i<numKeys; i++) {
+    trellis.setLED(i);
+    trellis.writeDisplay();    
+    delay(50);
+  }
+  // then turn them off
+  for (uint8_t i=0; i<numKeys; i++) {
+    trellis.clrLED(i);
+    trellis.writeDisplay();    
+    delay(50);
+  }
 }
 
 
