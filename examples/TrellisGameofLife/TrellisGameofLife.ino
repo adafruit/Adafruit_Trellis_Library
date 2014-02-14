@@ -74,7 +74,7 @@ void setup() {
   pinMode(INTPIN, INPUT);
   digitalWrite(INTPIN, HIGH);
   
-  trellis.begin(0x70, 0x71, 0x72, 0x73);
+  trellis.begin(0x72, 0x71, 0x70, 0x73);
   
   for (uint8_t i=0; i<8; i++) {
     for (uint8_t j=0; j<8; j++) {
