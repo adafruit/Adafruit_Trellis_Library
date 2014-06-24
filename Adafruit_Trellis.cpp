@@ -18,24 +18,28 @@
 #include <Wire.h>
 #include "Adafruit_Trellis.h"
 
+#define HT16K33_BLINK_CMD       0x80
+#define HT16K33_BLINK_DISPLAYON 0x01
+#define HT16K33_CMD_BRIGHTNESS  0xE0
 
 /*
 These are the lookup tables that convert the LED/button #
 to the memory address in the HT16K33 - don't mess with them :)
 */
 
-static uint8_t ledLUT[16] =  {0x3A, 0x37, 0x35, 0x34, 
-			      0x28, 0x29, 0x23, 0x24,   
-			      0x16, 0x1B, 0x11, 0x10, 
-			      0x0E, 0x0D, 0x0C, 0x02};
-
-static uint8_t buttonLUT[16] = {0x07, 0x04, 0x02, 0x22, 
-				0x05, 0x06, 0x00, 0x01,
-				0x03, 0x10, 0x30, 0x21, 
-				0x13, 0x12, 0x11, 0x31};
+static const uint8_t PROGMEM
+  ledLUT[16] =
+    { 0x3A, 0x37, 0x35, 0x34,
+      0x28, 0x29, 0x23, 0x24,
+      0x16, 0x1B, 0x11, 0x10,
+      0x0E, 0x0D, 0x0C, 0x02 },
+  buttonLUT[16] =
+    { 0x07, 0x04, 0x02, 0x22,
+      0x05, 0x06, 0x00, 0x01,
+      0x03, 0x10, 0x30, 0x21,
+      0x13, 0x12, 0x11, 0x31 };
 
 Adafruit_Trellis::Adafruit_Trellis(void) {
-
 }
 
 void Adafruit_Trellis::begin(uint8_t _addr = 0x70) {
@@ -51,7 +55,7 @@ void Adafruit_Trellis::begin(uint8_t _addr = 0x70) {
   setBrightness(15); // max brightness
 
   Wire.beginTransmission(i2c_addr);
-  Wire.write(0xA1);  // turn on interrupt, active high
+  Wire.write(0xA1);  // turn on interrupt, active low
   Wire.endTransmission();
 
 }
@@ -62,11 +66,13 @@ Helper button functions, the data is updated every readSwitches() call!
 
 bool Adafruit_Trellis::isKeyPressed(uint8_t k) {
   if (k > 16) return false;  
-  return (keys[buttonLUT[k]>>4] & _BV(buttonLUT[k] & 0x0F));
+  k = pgm_read_byte(&buttonLUT[k]);
+  return (keys[k>>4] & _BV(k & 0x0F));
 }
 bool Adafruit_Trellis::wasKeyPressed(uint8_t k) {
   if (k > 16) return false;  
-  return (lastkeys[buttonLUT[k]>>4] & _BV(buttonLUT[k] & 0x0F));
+  k = pgm_read_byte(&buttonLUT[k]);
+  return (lastkeys[k>>4] & _BV(k & 0x0F));
 }
 
 boolean Adafruit_Trellis::justPressed(uint8_t k) {
@@ -82,18 +88,19 @@ Helper LED functions, the data is written on writeDisplay()
 
 
 boolean Adafruit_Trellis::isLED(uint8_t x) {
- if (x > 16) return false;  
- if (displaybuffer[ledLUT[x] >> 4] & _BV(ledLUT[x] & 0x0F)) 
-   return true;
- return false; 
+  if (x > 16) return false;
+  x = pgm_read_byte(&ledLUT[x]);
+  return ((displaybuffer[x >> 4] & _BV(x & 0x0F)) > 0);
 }
 void Adafruit_Trellis::setLED(uint8_t x) {
- if (x > 16) return;  
- displaybuffer[ledLUT[x] >> 4] |= _BV(ledLUT[x] & 0x0F);  
+  if (x > 16) return;
+  x = pgm_read_byte(&ledLUT[x]);
+  displaybuffer[x >> 4] |= _BV(x & 0x0F);
 }
 void Adafruit_Trellis::clrLED(uint8_t x) {
- if (x > 16) return;  
- displaybuffer[ledLUT[x] >> 4] &= ~_BV(ledLUT[x] & 0x0F);  
+  if (x > 16) return;
+  x = pgm_read_byte(&ledLUT[x]);
+  displaybuffer[x >> 4] &= ~_BV(x & 0x0F);
 }
 
 
@@ -102,9 +109,8 @@ void Adafruit_Trellis::clrLED(uint8_t x) {
 */
 
 boolean Adafruit_Trellis::readSwitches(void) {
-  for (uint8_t i=0; i<6; i++) 
-    lastkeys[i] = keys[i];
-    
+  memcpy(lastkeys, keys, sizeof(keys));
+
   Wire.beginTransmission((byte)i2c_addr);
   Wire.write(0x40);
   Wire.endTransmission();
@@ -127,7 +133,7 @@ boolean Adafruit_Trellis::readSwitches(void) {
 void Adafruit_Trellis::setBrightness(uint8_t b) {
   if (b > 15) b = 15;
   Wire.beginTransmission(i2c_addr);
-  Wire.write(0xE0 | b);
+  Wire.write(HT16K33_CMD_BRIGHTNESS | b);
   Wire.endTransmission();  
 }
 
@@ -152,9 +158,7 @@ void Adafruit_Trellis::writeDisplay(void) {
 }
 
 void Adafruit_Trellis::clear(void) {
-  for (uint8_t i=0; i<8; i++) {
-    displaybuffer[i] = 0;
-  }
+  memset(displaybuffer, 0, sizeof(displaybuffer));
 }
 
 

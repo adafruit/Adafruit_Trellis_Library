@@ -15,6 +15,9 @@
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
+#ifndef _TRELLIS_H_
+#define _TRELLIS_H_
+
 #if (ARDUINO >= 100)
  #include "Arduino.h"
 #else
@@ -23,17 +26,13 @@
 
 #include "Wire.h"
 
-#define LED_ON 1
+#define LED_ON  1
 #define LED_OFF 0
 
-#define HT16K33_BLINK_CMD 0x80
-#define HT16K33_BLINK_DISPLAYON 0x01
-#define HT16K33_BLINK_OFF 0
-#define HT16K33_BLINK_2HZ  1
-#define HT16K33_BLINK_1HZ  2
-#define HT16K33_BLINK_HALFHZ  3
-
-#define HT16K33_CMD_BRIGHTNESS 0x0E
+#define HT16K33_BLINK_OFF    0
+#define HT16K33_BLINK_2HZ    1
+#define HT16K33_BLINK_1HZ    2
+#define HT16K33_BLINK_HALFHZ 3
 
 
 // this is the raw HT16K33 controller
@@ -54,7 +53,7 @@ class Adafruit_Trellis {
   boolean justPressed(uint8_t k);
   boolean justReleased(uint8_t k);
 
-  uint16_t displaybuffer[8]; 
+  uint16_t displaybuffer[8];
 
   void init(uint8_t a);
  private:
@@ -78,7 +77,7 @@ class Adafruit_TrellisSet {
   void begin(uint8_t _addr0 = 0x70, uint8_t _addr1 = 0x71,
 	     uint8_t _addr2 = 0x72, uint8_t _addr3 = 0x73,
 	     uint8_t _addr4 = 0x74, uint8_t _addr5 = 0x75,
-	     uint8_t _addr6 = 0x76, uint8_t _addr7 = 0x77); 
+	     uint8_t _addr6 = 0x76, uint8_t _addr7 = 0x77);
 
   void setBrightness(uint8_t b);
   void blinkRate(uint8_t b);
@@ -97,3 +96,5 @@ class Adafruit_TrellisSet {
   Adafruit_Trellis *matrices[8];
   uint8_t _nummatrix;
 };
+
+#endif // _TRELLIS_H_
