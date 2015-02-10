@@ -1,17 +1,17 @@
-/*************************************************** 
+/***************************************************
   This is an implementation of Conway's Game of Life.
 
-  Designed specifically to work with the Adafruit Trellis 
+  Designed specifically to work with the Adafruit Trellis
   ----> https://www.adafruit.com/products/1616
   ----> https://www.adafruit.com/products/1611
 
-  These displays use I2C to communicate, 2 pins are required to  
+  These displays use I2C to communicate, 2 pins are required to
   interface
-  Adafruit invests time and resources providing this open source code, 
-  please support Adafruit and open-source hardware by purchasing 
+  Adafruit invests time and resources providing this open source code,
+  please support Adafruit and open-source hardware by purchasing
   products from Adafruit!
 
-  Written by Tony Sherwood for Adafruit Industries.  
+  Written by Tony Sherwood for Adafruit Industries.
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
@@ -40,11 +40,11 @@ Adafruit_TrellisSet trellis =  Adafruit_TrellisSet(&matrix0, &matrix1, &matrix2,
              [0x73]--[0x72]
                        |
   [ARDUINO]--[0x70]--[0x71]
- 
+
 */
 
 int chessboard[8][8] = {
-  {60, 56, 52, 48, 44, 40, 36, 32}, 
+  {60, 56, 52, 48, 44, 40, 36, 32},
   {61, 57, 53, 49, 45, 41, 37, 33},
   {62, 58, 54, 50, 46, 42, 38, 34},
   {63, 59, 55, 51, 47, 43, 39, 35},
@@ -62,7 +62,7 @@ int nextFrame[64];
 #define INTPIN 5
 // Connect I2C SDA pin to your Arduino SDA line
 // Connect I2C SCL pin to your Arduino SCL line
-// All Trellises share the SDA, SCL and INT pin! 
+// All Trellises share the SDA, SCL and INT pin!
 // Even 8 tiles use only 3 wires max
 
 
@@ -73,23 +73,23 @@ void setup() {
   // INT pin requires a pullup
   pinMode(INTPIN, INPUT);
   digitalWrite(INTPIN, HIGH);
-  
+
   trellis.begin(0x72, 0x71, 0x70, 0x73);
-  
+
   for (uint8_t i=0; i<8; i++) {
     for (uint8_t j=0; j<8; j++) {
       trellis.setLED(chessboard[i][j]);
       trellis.writeDisplay();
       delay(50);
     }
-  }  
+  }
 
-  
+
   for (uint8_t i=0; i<numKeys; i++) {
     trellis.clrLED(i);
   }
   trellis.writeDisplay();
-  
+
   // Set up a glider
   makeOscillator();
   trellis.writeDisplay();
@@ -109,7 +109,7 @@ int getNeighbor(int placeVal, int neighbor) {
   int py = 0;
   int x = 0;
   int y = 0;
-  
+
   getPosition(placeVal, &px, &py);
   switch (neighbor) {
     case 0:
@@ -152,7 +152,7 @@ int getNeighbor(int placeVal, int neighbor) {
   if (x > 7) x = 0;
   if (y < 0) y = 7;
   if (y > 7) y = 0;
-  
+
   return chessboard[x][y];
 }
 
@@ -162,7 +162,7 @@ int getPosition(int pv, int *tx, int *ty) {
       if (chessboard[i][j] == pv) {
         *tx = i;
         *ty = j;
-        return 1;  
+        return 1;
       }
     }
   }
@@ -188,7 +188,7 @@ void makeOscillator() {
 }
 
 
-void liveOrDie(int placeVal) {  
+void liveOrDie(int placeVal) {
   // Calculate whether to live or die the next round
   int neighbors = 0;
   for (int d=0; d<=7; d++) {
@@ -196,7 +196,7 @@ void liveOrDie(int placeVal) {
       neighbors++;
     }
   }
-  
+
   if (neighbors == 3 && !trellis.isLED(placeVal)) {
     nextFrame[placeVal] = 1;
   }else if ((neighbors == 2 || neighbors == 3) && trellis.isLED(placeVal)) {
@@ -208,17 +208,17 @@ void liveOrDie(int placeVal) {
 
 void loop() {
   delay(500); // 100ms delay is required, dont remove me!
- 
+
   // Clear out the next frame
   for(int c=0; c<64; c++) {
     nextFrame[c] = 0;
   }
-  
+
   //compute the next step
   for (uint8_t i=0; i<numKeys; i++) {
     liveOrDie(i);
-  } 
-  
+  }
+
   if (trellis.readSwitches()) {
     // go through every button
     for (uint8_t i=0; i<numKeys; i++) {
@@ -227,8 +227,8 @@ void loop() {
         nextFrame[i] = 1;
       }
     }
-  }  
-  
+  }
+
   // Update the map
   for (uint8_t i=0; i<numKeys; i++) {
     if(nextFrame[i] == 1) {
@@ -236,10 +236,10 @@ void loop() {
     } else {
       trellis.clrLED(i);
     }
-  } 
-  
+  }
+
   // tell the trellis to set the LEDs we requested
-  trellis.writeDisplay(); 
+  trellis.writeDisplay();
 
 }
 
