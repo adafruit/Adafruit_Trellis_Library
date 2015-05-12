@@ -18,6 +18,11 @@
 #ifndef _TRELLIS_H_
 #define _TRELLIS_H_
 
+// Set _BV if not already set (eg. Arudiono DUE, Arduino Zero Pro)
+#ifndef _BV
+#define _BV(bit) (1 << (bit))
+#endif
+
 #if (ARDUINO >= 100)
  #include "Arduino.h"
 #else
