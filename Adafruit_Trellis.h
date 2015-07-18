@@ -29,7 +29,11 @@
  #include "WProgram.h"
 #endif
 
-#include "Wire.h"
+#ifdef __AVR_ATtiny85__
+  #include <TinyWireM.h>
+#else
+  #include <Wire.h>
+#endif
 
 #define LED_ON  1
 #define LED_OFF 0

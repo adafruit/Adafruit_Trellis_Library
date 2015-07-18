@@ -15,7 +15,13 @@
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
-#include <Wire.h>
+#ifdef __AVR_ATtiny85__
+  #include <TinyWireM.h>
+  #define Wire TinyWireM
+#else
+  #include <Wire.h>
+#endif
+
 #include "Adafruit_Trellis.h"
 
 #define HT16K33_BLINK_CMD       0x80
