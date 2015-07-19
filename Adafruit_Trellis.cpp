@@ -1,17 +1,17 @@
-/*************************************************** 
+/***************************************************
   This is a library for the Adafruit Trellis w/HT16K33
 
-  Designed specifically to work with the Adafruit Trellis 
+  Designed specifically to work with the Adafruit Trellis
   ----> https://www.adafruit.com/products/1616
   ----> https://www.adafruit.com/products/1611
 
-  These displays use I2C to communicate, 2 pins are required to  
+  These displays use I2C to communicate, 2 pins are required to
   interface
-  Adafruit invests time and resources providing this open source code, 
-  please support Adafruit and open-source hardware by purchasing 
+  Adafruit invests time and resources providing this open source code,
+  please support Adafruit and open-source hardware by purchasing
   products from Adafruit!
 
-  Written by Limor Fried/Ladyada for Adafruit Industries.  
+  Written by Limor Fried/Ladyada for Adafruit Industries.
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
@@ -57,7 +57,7 @@ void Adafruit_Trellis::begin(uint8_t _addr = 0x70) {
   Wire.write(0x21);  // turn on oscillator
   Wire.endTransmission();
   blinkRate(HT16K33_BLINK_OFF);
-  
+
   setBrightness(15); // max brightness
 
   Wire.beginTransmission(i2c_addr);
@@ -66,17 +66,26 @@ void Adafruit_Trellis::begin(uint8_t _addr = 0x70) {
 
 }
 
-/* 
+/*
+Put device into low power sleep mode waiting for an interrupt to wake
+*/
+void Adafruit_Trellis::sleep() {
+  Wire.beginTransmission(i2c_addr);
+  Wire.write(0x20);  // turn off oscillator (Standby Mode)
+  Wire.endTransmission();
+}
+
+/*
 Helper button functions, the data is updated every readSwitches() call!
 */
 
 bool Adafruit_Trellis::isKeyPressed(uint8_t k) {
-  if (k > 16) return false;  
+  if (k > 16) return false;
   k = pgm_read_byte(&buttonLUT[k]);
   return (keys[k>>4] & _BV(k & 0x0F));
 }
 bool Adafruit_Trellis::wasKeyPressed(uint8_t k) {
-  if (k > 16) return false;  
+  if (k > 16) return false;
   k = pgm_read_byte(&buttonLUT[k]);
   return (lastkeys[k>>4] & _BV(k & 0x0F));
 }
@@ -88,7 +97,7 @@ boolean Adafruit_Trellis::justReleased(uint8_t k) {
   return (!isKeyPressed(k) & wasKeyPressed(k));
 }
 
-/* 
+/*
 Helper LED functions, the data is written on writeDisplay()
 */
 
@@ -110,7 +119,7 @@ void Adafruit_Trellis::clrLED(uint8_t x) {
 }
 
 
-/* 
+/*
    Gets the switch memory data and updates the last/current read
 */
 
@@ -121,7 +130,7 @@ boolean Adafruit_Trellis::readSwitches(void) {
   Wire.write(0x40);
   Wire.endTransmission();
   Wire.requestFrom((byte)i2c_addr, (byte)6);
-  for (uint8_t i=0; i<6; i++) 
+  for (uint8_t i=0; i<6; i++)
     keys[i] = Wire.read();
 
   for (uint8_t i=0; i<6; i++) {
@@ -140,14 +149,14 @@ void Adafruit_Trellis::setBrightness(uint8_t b) {
   if (b > 15) b = 15;
   Wire.beginTransmission(i2c_addr);
   Wire.write(HT16K33_CMD_BRIGHTNESS | b);
-  Wire.endTransmission();  
+  Wire.endTransmission();
 }
 
 void Adafruit_Trellis::blinkRate(uint8_t b) {
   Wire.beginTransmission(i2c_addr);
   if (b > 3) b = 0; // turn off if not sure
-  
-  Wire.write(HT16K33_BLINK_CMD | HT16K33_BLINK_DISPLAYON | (b << 1)); 
+
+  Wire.write(HT16K33_BLINK_CMD | HT16K33_BLINK_DISPLAYON | (b << 1));
   Wire.endTransmission();
 }
 
@@ -157,10 +166,10 @@ void Adafruit_Trellis::writeDisplay(void) {
   Wire.write((uint8_t)0x00); // start at address $00
 
   for (uint8_t i=0; i<8; i++) {
-    Wire.write(displaybuffer[i] & 0xFF);    
-    Wire.write(displaybuffer[i] >> 8);    
+    Wire.write(displaybuffer[i] & 0xFF);
+    Wire.write(displaybuffer[i] >> 8);
   }
-  Wire.endTransmission();  
+  Wire.endTransmission();
 }
 
 void Adafruit_Trellis::clear(void) {
@@ -171,7 +180,7 @@ void Adafruit_Trellis::clear(void) {
 /*************************************************************************/
 
 // Maximum 8 matrices (3 address pins)
-Adafruit_TrellisSet::Adafruit_TrellisSet(Adafruit_Trellis *matrix0, 
+Adafruit_TrellisSet::Adafruit_TrellisSet(Adafruit_Trellis *matrix0,
 				      Adafruit_Trellis *matrix1,
 				      Adafruit_Trellis *matrix2,
 				      Adafruit_Trellis *matrix3,
@@ -211,7 +220,7 @@ void Adafruit_TrellisSet::begin(uint8_t addr0, uint8_t addr1,
   }
 }
 
-/* 
+/*
 Helper button functions, the data is updated every readSwitches() call!
 */
 
@@ -232,7 +241,7 @@ bool Adafruit_TrellisSet::isKeyPressed(uint8_t k) {
 bool Adafruit_TrellisSet::wasKeyPressed(uint8_t k) {
   if (k > 128) return false;
   uint8_t matrix, key;
-  
+
   // determine submatrix #
   matrix = k / 16;
   key = k % 16;
@@ -250,7 +259,7 @@ boolean Adafruit_TrellisSet::justReleased(uint8_t k) {
   return (!isKeyPressed(k) & wasKeyPressed(k));
 }
 
-/* 
+/*
 Helper LED functions, the data is written on writeDisplay()
 */
 
@@ -258,7 +267,7 @@ Helper LED functions, the data is written on writeDisplay()
 boolean Adafruit_TrellisSet::isLED(uint8_t x) {
   if (x > 128) return false;
   uint8_t matrix, led;
-  
+
   // determine submatrix #
   matrix = x / 16;
   led = x % 16;
@@ -272,7 +281,7 @@ boolean Adafruit_TrellisSet::isLED(uint8_t x) {
 void Adafruit_TrellisSet::setLED(uint8_t x) {
   if (x > 128) return ;
   uint8_t matrix, led;
-  
+
   // determine submatrix #
   matrix = x / 16;
   led = x % 16;
@@ -286,7 +295,7 @@ void Adafruit_TrellisSet::setLED(uint8_t x) {
 void Adafruit_TrellisSet::clrLED(uint8_t x) {
   if (x > 128) return ;
   uint8_t matrix, led;
-  
+
   // determine submatrix #
   matrix = x / 16;
   led = x % 16;
@@ -298,7 +307,7 @@ void Adafruit_TrellisSet::clrLED(uint8_t x) {
 }
 
 
-/* 
+/*
    Gets the switch memory data and updates the last/current read
 */
 
@@ -330,7 +339,7 @@ void Adafruit_TrellisSet::writeDisplay(void) {
  for (uint8_t i=0; i<_nummatrix; i++) {
    if (matrices[i] != 0)
      matrices[i]->writeDisplay();
- } 
+ }
 }
 
 void Adafruit_TrellisSet::clear(void) {
