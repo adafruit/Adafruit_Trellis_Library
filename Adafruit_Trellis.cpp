@@ -71,12 +71,12 @@ Helper button functions, the data is updated every readSwitches() call!
 */
 
 bool Adafruit_Trellis::isKeyPressed(uint8_t k) {
-  if (k > 16) return false;  
+  if (k > 15) return false;
   k = pgm_read_byte(&buttonLUT[k]);
   return (keys[k>>4] & _BV(k & 0x0F));
 }
 bool Adafruit_Trellis::wasKeyPressed(uint8_t k) {
-  if (k > 16) return false;  
+  if (k > 15) return false;
   k = pgm_read_byte(&buttonLUT[k]);
   return (lastkeys[k>>4] & _BV(k & 0x0F));
 }
@@ -94,17 +94,17 @@ Helper LED functions, the data is written on writeDisplay()
 
 
 boolean Adafruit_Trellis::isLED(uint8_t x) {
-  if (x > 16) return false;
+  if (x > 15) return false;
   x = pgm_read_byte(&ledLUT[x]);
   return ((displaybuffer[x >> 4] & _BV(x & 0x0F)) > 0);
 }
 void Adafruit_Trellis::setLED(uint8_t x) {
-  if (x > 16) return;
+  if (x > 15) return;
   x = pgm_read_byte(&ledLUT[x]);
   displaybuffer[x >> 4] |= _BV(x & 0x0F);
 }
 void Adafruit_Trellis::clrLED(uint8_t x) {
-  if (x > 16) return;
+  if (x > 15) return;
   x = pgm_read_byte(&ledLUT[x]);
   displaybuffer[x >> 4] &= ~_BV(x & 0x0F);
 }
@@ -216,7 +216,7 @@ Helper button functions, the data is updated every readSwitches() call!
 */
 
 bool Adafruit_TrellisSet::isKeyPressed(uint8_t k) {
-  if (k > 128) return false;
+  if (k > 127) return false;
   uint8_t matrix, key;
 
   // determine submatrix #
@@ -230,7 +230,7 @@ bool Adafruit_TrellisSet::isKeyPressed(uint8_t k) {
 }
 
 bool Adafruit_TrellisSet::wasKeyPressed(uint8_t k) {
-  if (k > 128) return false;
+  if (k > 127) return false;
   uint8_t matrix, key;
   
   // determine submatrix #
@@ -256,7 +256,7 @@ Helper LED functions, the data is written on writeDisplay()
 
 
 boolean Adafruit_TrellisSet::isLED(uint8_t x) {
-  if (x > 128) return false;
+  if (x > 127) return false;
   uint8_t matrix, led;
   
   // determine submatrix #
@@ -270,7 +270,7 @@ boolean Adafruit_TrellisSet::isLED(uint8_t x) {
 }
 
 void Adafruit_TrellisSet::setLED(uint8_t x) {
-  if (x > 128) return ;
+  if (x > 127) return ;
   uint8_t matrix, led;
   
   // determine submatrix #
@@ -284,7 +284,7 @@ void Adafruit_TrellisSet::setLED(uint8_t x) {
 }
 
 void Adafruit_TrellisSet::clrLED(uint8_t x) {
-  if (x > 128) return ;
+  if (x > 127) return ;
   uint8_t matrix, led;
   
   // determine submatrix #
