@@ -15,6 +15,11 @@
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
+// Set _BV if not already set (eg. Arudiono DUE, Arduino Zero Pro)
+#ifndef _BV
+#define _BV(bit) (1 << (bit))
+#endif
+
 #ifndef _TRELLIS_H_
 #define _TRELLIS_H_
 
