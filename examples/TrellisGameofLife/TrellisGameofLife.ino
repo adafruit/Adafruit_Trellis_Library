@@ -15,7 +15,6 @@
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
-#include <Wire.h>
 #include "Adafruit_Trellis.h"
 
 Adafruit_Trellis matrix0 = Adafruit_Trellis();
