@@ -167,6 +167,18 @@ void Adafruit_Trellis::clear(void) {
   memset(displaybuffer, 0, sizeof(displaybuffer));
 }
 
+void Adafruit_Trellis::sleep(void) {
+  Wire.beginTransmission(i2c_addr);
+  Wire.write(0x20);  // turn off oscillator (standby mode)
+  Wire.endTransmission();
+}
+
+void Adafruit_Trellis::wakeup(void) {
+  Wire.beginTransmission(i2c_addr);
+  Wire.write(0x21);  // turn on oscillator
+  Wire.endTransmission();
+}
+
 
 /*************************************************************************/
 
@@ -338,4 +350,18 @@ void Adafruit_TrellisSet::clear(void) {
    if (matrices[i] != 0)
      matrices[i]->clear();
  }
+}
+
+void Adafruit_TrellisSet::sleep(void) {
+  for (uint8_t i=0; i<_nummatrix; i++) {
+    if (matrices[i] != 0)
+      matrices[i]->sleep();
+  }
+}
+
+void Adafruit_TrellisSet::wakeup(void) {
+  for (uint8_t i=0; i<_nummatrix; i++) {
+    if (matrices[i] != 0)
+      matrices[i]->wakeup();
+  }
 }
