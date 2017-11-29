@@ -53,6 +53,8 @@ class Adafruit_Trellis {
   void blinkRate(uint8_t b);
   void writeDisplay(void);
   void clear(void);
+  void sleep(void);
+  void wakeup(void);
   bool isKeyPressed(uint8_t k);
   bool wasKeyPressed(uint8_t k);
   boolean isLED(uint8_t x);
@@ -92,6 +94,8 @@ class Adafruit_TrellisSet {
   void blinkRate(uint8_t b);
   void writeDisplay(void);
   void clear(void);
+  void sleep(void);
+  void wakeup(void);
   bool isKeyPressed(uint8_t k);
   bool wasKeyPressed(uint8_t k);
   boolean isLED(uint8_t x);
